@@ -1,7 +1,8 @@
-function GameInit() {
+function GameInit(gridViewItems) {
+    let winner = "";
+    let gamePlaying = true;
     const players = ["X", "O"];
     let currentTurn = players[0];
-    const getPlayers = () => players;
     const getCurrentTurn = () => currentTurn;
     const updateCurrentTurn = () => {
         if (currentTurn === players[0]) {
@@ -9,45 +10,50 @@ function GameInit() {
         } else if (currentTurn === players[1]) {
             currentTurn = players[0]
         };
-    }
+    };
     const gameGridArray = [
         "", "", "",
         "", "", "",
         "", "", "",
     ];
-    winnigGameGridTrios = [
+    winningGameGridTrios = [
         // left to right sequences
-        [gameGridArray[0], gameGridArray[1], gameGridArray[2]],
-        [gameGridArray[3], gameGridArray[4], gameGridArray[5]],
-        [gameGridArray[6], gameGridArray[7], gameGridArray[8]],
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
         // top to bottom sequences
-        [gameGridArray[0], gameGridArray[3], gameGridArray[6]],
-        [gameGridArray[1], gameGridArray[4], gameGridArray[7]],
-        [gameGridArray[2], gameGridArray[5], gameGridArray[8]],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
         // diagonals
-        [gameGridArray[0], gameGridArray[4], gameGridArray[8]],
-        [gameGridArray[2], gameGridArray[4], gameGridArray[6]],
-        [gameGridArray[6], gameGridArray[7], gameGridArray[8]],
+        [0, 4, 8],
+        [2, 4, 6],
     ];
-    return {
-        getPlayers, getCurrentTurn,
-        updateCurrentTurn
-    };
-};
-
-const Game = GameInit();
-
-window.addEventListener("DOMContentLoaded", () => {
-    const ticTacToeGameSquaresGridSquareItems = [...document.querySelectorAll(".tic-tac-toe-game-squares-grid-square-item")];
-
-    ticTacToeGameSquaresGridSquareItems.forEach(squareItem => {
+    // apply events
+    gridViewItems.forEach(squareItem => {
         let squareItemChosen = false;
         squareItem.addEventListener("click", () => {
-            if (!squareItemChosen) {
-                squareItem.innerHTML = Game.getCurrentTurn();
-                Game.updateCurrentTurn();
+            if (!squareItemChosen && gamePlaying) {
+                // update game grid array
+                // find the equivalent index in the gameGridArray to the squareItem being clicked
+                gameGridArray[gridViewItems.indexOf(squareItem)] = getCurrentTurn();
+                // console.log(gameGridArray[gridViewItems.indexOf(squareItem)]);
+                squareItem.innerHTML = getCurrentTurn();
+                updateCurrentTurn();
                 squareItemChosen = true;
+                
+
+                winningGameGridTrios.forEach(gridTrio => {
+                    for (let i = 0; i < gridTrio.length; i++) {
+                        if (gridTrio[i] === gridViewItems.indexOf(squareItem)) {
+                            console.log(gridTrio[i]);
+                        }
+                    }
+                });
             };
         });
     });
-});
+};
+
+const ticTacToeGameSquaresGridSquareItems = [...document.querySelectorAll(".tic-tac-toe-game-squares-grid-square-item")];
+const Game = GameInit(ticTacToeGameSquaresGridSquareItems);
