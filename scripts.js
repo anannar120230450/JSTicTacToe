@@ -1,5 +1,4 @@
 function GameInit(player1, player2) {
-    let gameRound = 1;
     let play1Score = 0;
     let play2Score = 0;
     const getPlayerScore = (player) => {
@@ -15,10 +14,6 @@ function GameInit(player1, player2) {
         } else if (player === 2) {
             play2Score++;
         };
-    };
-    const getGameRound = () => gameRound
-    const updateGameRound = () => {
-        gameRound++;
     };
     let cellsArray = [
         new GameCell(1), new GameCell(2), new GameCell(3),
@@ -48,7 +43,6 @@ function GameInit(player1, player2) {
     return {
         getCellsArray, updateCellsArray,
         getCurrentPlayer, updateCurrentPlayer,
-        getGameRound, updateGameRound,
         getPlayerScore, updatePlayerScore,
         reset,
     };
@@ -70,11 +64,50 @@ DOMCellItems.forEach((cellItem, index) => {
         // console.log(Game.getCellsArray());
         // check winner
         const currentCellArray = Game.getCellsArray();
-        if (currentCellArray[0].value && currentCellArray[0].value === currentCellArray[1].value && currentCellArray[0].value === currentCellArray[2].value) {
+        const winningCellSequences = [
+            // left to right
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8],
+            // top to bottom
+            [0, 3, 6],
+            [1, 4, 7],
+            [2, 5, 8],
+            // diagonals
+            [0, 4, 9], // top left to bottom right
+            [2, 4, 6], // top right to bottom left
+        ]
+        
+        let didAnyWin = false;
+        for (cellSequence of winningCellSequences) {
+            const [a, b, c] = cellSequence;
+            if (currentCellArray[a].value && currentCellArray[a].value === currentCellArray[b].value && currentCellArray[a].value === currentCellArray[c].value) {
+                DOMCellItems.forEach(item => {
+                    item.innerHTML = "";
+                });
+                if (Game.getCurrentPlayer() === "X") {
+                    Game.updatePlayerScore(1);
+                    document.querySelector(".game-info-toolbar-player-scores-player-1-score").innerHTML = Game.getPlayerScore(1);
+                } else if (Game.getCurrentPlayer() === "0") {
+                    Game.updatePlayerScore(2);
+                    document.querySelector(".game-info-toolbar-player-scores-player-2-score").innerHTML = Game.getPlayerScore(2);
+                };
+                Game.reset();
+                didAnyWin = true;
+                break;
+    
+                /* document.getElementById("winning-message-text").innerHTML = `${Game.getCurrentPlayer()} Wins`;
+                document.querySelector(".winning-message-backdrop").style.display = "flex"; */
+            }
+        }
+
+        if (!didAnyWin) {
+            Game.updateCurrentPlayer()
+        }
+        /*if (currentCellArray[0].value && currentCellArray[0].value === currentCellArray[1].value && currentCellArray[0].value === currentCellArray[2].value) {
             DOMCellItems.forEach(item => {
                 item.innerHTML = "";
             });
-            Game.updateGameRound();
             if (Game.getCurrentPlayer() === "X") {
                 Game.updatePlayerScore(1);
                 document.querySelector(".game-info-toolbar-player-scores-player-1-score").innerHTML = Game.getPlayerScore(1);
@@ -84,10 +117,10 @@ DOMCellItems.forEach((cellItem, index) => {
             };
             Game.reset();
 
-            /* document.getElementById("winning-message-text").innerHTML = `${Game.getCurrentPlayer()} Wins`;
-            document.querySelector(".winning-message-backdrop").style.display = "flex"; */
+            /// document.getElementById("winning-message-text").innerHTML = `${Game.getCurrentPlayer()} Wins`;
+            document.querySelector(".winning-message-backdrop").style.display = "flex"; ///
         } else {
             Game.updateCurrentPlayer();
-        };
+        };*/
     });
 });
