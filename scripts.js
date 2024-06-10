@@ -58,15 +58,14 @@ const DOMCellItems = [...document.querySelectorAll(".tic-tac-toe-game-squares-gr
 const Game = GameInit("X", "O");
 
 DOMCellItems.forEach((cellItem, index) => {
-    let cellSelected = false;
     cellItem.addEventListener("click", () => {
-        if (!cellSelected) {
-            cellSelected = true;
+        const currentCellArray1 = Game.getCellsArray();
+        if (!currentCellArray1[index].selected) {
             cellItem.innerHTML = Game.getCurrentPlayer();
             Game.updateCellsArray(index, Game.getCurrentPlayer(), true);
             // console.log(Game.getCellsArray());
             // check winner
-            const currentCellArray = Game.getCellsArray();
+            const currentCellArray2 = Game.getCellsArray();
             const winningCellSequences = [
                 // left to right
                 [0, 1, 2],
@@ -84,7 +83,7 @@ DOMCellItems.forEach((cellItem, index) => {
             let didAnyWin = false;
             for (cellSequence of winningCellSequences) {
                 const [a, b, c] = cellSequence;
-                if (currentCellArray[a].value && currentCellArray[a].value === currentCellArray[b].value && currentCellArray[a].value === currentCellArray[c].value) {
+                if (currentCellArray2[a].value && currentCellArray2[a].value === currentCellArray2[b].value && currentCellArray2[a].value === currentCellArray2[c].value) {
                     DOMCellItems.forEach(item => {
                         item.innerHTML = "";
                     });
@@ -110,9 +109,9 @@ DOMCellItems.forEach((cellItem, index) => {
             }
 
             if (!didAnyWin) {
-                Game.updateCurrentPlayer()
+                Game.updateCurrentPlayer();
             }
-            /*if (currentCellArray[0].value && currentCellArray[0].value === currentCellArray[1].value && currentCellArray[0].value === currentCellArray[2].value) {
+            /*if (currentCellArray2[0].value && currentCellArray2[0].value === currentCellArray2[1].value && currentCellArray2[0].value === currentCellArray2[2].value) {
                 DOMCellItems.forEach(item => {
                     item.innerHTML = "";
                 });
@@ -124,7 +123,7 @@ DOMCellItems.forEach((cellItem, index) => {
                     document.querySelector(".game-info-toolbar-player-scores-player-2-score").innerHTML = Game.getPlayerScore(2);
                 };
                 Game.reset();
-    
+     
                 /// document.getElementById("winning-message-text").innerHTML = `${Game.getCurrentPlayer()} Wins`;
                 document.querySelector(".winning-message-backdrop").style.display = "flex"; ///
             } else {
