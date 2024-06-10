@@ -38,13 +38,19 @@ function GameInit(player1, player2) {
             new GameCell(4), new GameCell(5), new GameCell(6),
             new GameCell(7), new GameCell(8), new GameCell(9),
         ];
-    }
+    };
+    const getPlayers = () => {
+        return {
+            player1: player1,
+            player2: player2,
+        };
+    };
 
     return {
         getCellsArray, updateCellsArray,
         getCurrentPlayer, updateCurrentPlayer,
         getPlayerScore, updatePlayerScore,
-        reset,
+        reset, getPlayers,
     };
 };
 
@@ -60,6 +66,7 @@ const Game = GameInit("X", "O");
 DOMCellItems.forEach((cellItem, index) => {
     cellItem.addEventListener("click", () => {
         const currentCellArray1 = Game.getCellsArray();
+        const players = Game.getPlayers();
         if (!currentCellArray1[index].selected) {
             cellItem.innerHTML = Game.getCurrentPlayer();
             Game.updateCellsArray(index, Game.getCurrentPlayer(), true);
@@ -87,17 +94,24 @@ DOMCellItems.forEach((cellItem, index) => {
                     DOMCellItems.forEach(item => {
                         item.innerHTML = "";
                     });
-                    if (Game.getCurrentPlayer() === "X") {
+                    if (Game.getCurrentPlayer() === players.player1) {
                         Game.updatePlayerScore(1);
                         document.querySelector(".game-info-toolbar-player-scores-player-1-score").innerHTML = Game.getPlayerScore(1);
 
                         // check if won
                         if (Game.getPlayerScore(1) === 3) {
+                            document.querySelector("#winning-message-text").innerHTML = `${players.player1} Wins!`;
                             document.querySelector(".winning-message-backdrop").style.display = "flex";
                         }
-                    } else if (Game.getCurrentPlayer() === "0") {
+                    } else if (Game.getCurrentPlayer() === players.player2) {
                         Game.updatePlayerScore(2);
                         document.querySelector(".game-info-toolbar-player-scores-player-2-score").innerHTML = Game.getPlayerScore(2);
+
+                        // check if won
+                        if (Game.getPlayerScore(2) === 3) {
+                            document.querySelector("#winning-message-text").innerHTML = `${players.player2} Wins!`;
+                            document.querySelector(".winning-message-backdrop").style.display = "flex";
+                        }
                     };
                     Game.reset();
                     didAnyWin = true;
