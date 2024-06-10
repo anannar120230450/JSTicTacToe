@@ -65,7 +65,7 @@ DOMCellItems.forEach((cellItem, index) => {
             Game.updateCellsArray(index, Game.getCurrentPlayer(), true);
             // console.log(Game.getCellsArray());
             // check winner
-            const currentCellArray2 = Game.getCellsArray();
+            const currentCellArray = Game.getCellsArray();
             const winningCellSequences = [
                 // left to right
                 [0, 1, 2],
@@ -76,14 +76,14 @@ DOMCellItems.forEach((cellItem, index) => {
                 [1, 4, 7],
                 [2, 5, 8],
                 // diagonals
-                [0, 4, 9], // top left to bottom right
+                [0, 4, 8], // top left to bottom right
                 [2, 4, 6], // top right to bottom left
             ]
 
             let didAnyWin = false;
             for (cellSequence of winningCellSequences) {
                 const [a, b, c] = cellSequence;
-                if (currentCellArray2[a].value && currentCellArray2[a].value === currentCellArray2[b].value && currentCellArray2[a].value === currentCellArray2[c].value) {
+                if (currentCellArray[a].value && currentCellArray[a].value === currentCellArray[b].value && currentCellArray[a].value === currentCellArray[c].value) {
                     DOMCellItems.forEach(item => {
                         item.innerHTML = "";
                     });
@@ -111,7 +111,7 @@ DOMCellItems.forEach((cellItem, index) => {
             if (!didAnyWin) {
                 Game.updateCurrentPlayer();
             }
-            /*if (currentCellArray2[0].value && currentCellArray2[0].value === currentCellArray2[1].value && currentCellArray2[0].value === currentCellArray2[2].value) {
+            /*if (currentCellArray[0].value && currentCellArray[0].value === currentCellArray[1].value && currentCellArray[0].value === currentCellArray[2].value) {
                 DOMCellItems.forEach(item => {
                     item.innerHTML = "";
                 });
