@@ -1,4 +1,25 @@
-function GameInit(play1, play2) {
+function GameInit(player1, player2) {
+    let gameRound = 1;
+    let play1Score = 0;
+    let play2Score = 0;
+    const getPlayerScore = (player) => {
+        if (player === 1) {
+            return play1Score;
+        } else if (player === 2) {
+            return play2Score;
+        };
+    }
+    const updatePlayerScore = (player) => {
+        if (player === 1) {
+            play1Score++;
+        } else if (player === 2) {
+            play2Score++;
+        };
+    };
+    const getGameRound = () => gameRound
+    const updateGameRound = () => {
+        gameRound++;
+    };
     let cellsArray = [
         new GameCell(1), new GameCell(2), new GameCell(3),
         new GameCell(4), new GameCell(5), new GameCell(6),
@@ -9,15 +30,27 @@ function GameInit(play1, play2) {
         cellsArray[index] = new GameCell(index + 1, value, selected)
     }
 
-    let currentTurn = play1;
-    const getCurrentTurn = () => currentTurn;
-    const updateCurrentTurn = () => {
-        currentTurn === play1 ? currentTurn = play2 : currentTurn = play1;
+    let currentTurn = player1;
+    const getCurrentPlayer = () => currentTurn;
+    const updateCurrentPlayer = () => {
+        currentTurn === player1 ? currentTurn = player2 : currentTurn = player1;
     };
+
+    const reset = () => {
+        currentTurn = "X";
+        cellsArray = [
+            new GameCell(1), new GameCell(2), new GameCell(3),
+            new GameCell(4), new GameCell(5), new GameCell(6),
+            new GameCell(7), new GameCell(8), new GameCell(9),
+        ];
+    }
 
     return {
         getCellsArray, updateCellsArray,
-        getCurrentTurn, updateCurrentTurn
+        getCurrentPlayer, updateCurrentPlayer,
+        getGameRound, updateGameRound,
+        getPlayerScore, updatePlayerScore,
+        reset,
     };
 };
 
@@ -27,18 +60,34 @@ function GameCell(id, value = "", selected = false) {
     this.selected = selected;
 }
 
-GameCell.prototype.select = () => {
-    this.selected = true;
-}
-
 const DOMCellItems = [...document.querySelectorAll(".tic-tac-toe-game-squares-grid-square-item")];
 const Game = GameInit("X", "0");
 
 DOMCellItems.forEach((cellItem, index) => {
     cellItem.addEventListener("click", () => {
-        cellItem.innerHTML = Game.getCurrentTurn();
-        Game.updateCellsArray(index, Game.getCurrentTurn(), true);
+        cellItem.innerHTML = Game.getCurrentPlayer();
+        Game.updateCellsArray(index, Game.getCurrentPlayer(), true);
         // console.log(Game.getCellsArray());
-        Game.updateCurrentTurn();
+        // check winner
+        const currentCellArray = Game.getCellsArray();
+        if (currentCellArray[0].value && currentCellArray[0].value === currentCellArray[1].value && currentCellArray[0].value === currentCellArray[2].value) {
+            DOMCellItems.forEach(item => {
+                item.innerHTML = "";
+            });
+            Game.updateGameRound();
+            if (Game.getCurrentPlayer() === "X") {
+                Game.updatePlayerScore(1);
+                document.querySelector(".game-info-toolbar-player-scores-player-1-score").innerHTML = Game.getPlayerScore(1);
+            } else if (Game.getCurrentPlayer() === "0") {
+                Game.updatePlayerScore(2);
+                document.querySelector(".game-info-toolbar-player-scores-player-2-score").innerHTML = Game.getPlayerScore(2);
+            };
+            Game.reset();
+
+            /* document.getElementById("winning-message-text").innerHTML = `${Game.getCurrentPlayer()} Wins`;
+            document.querySelector(".winning-message-backdrop").style.display = "flex"; */
+        } else {
+            Game.updateCurrentPlayer();
+        };
     });
 });
