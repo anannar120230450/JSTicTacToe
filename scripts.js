@@ -23,7 +23,14 @@ function GameInit(player1, player2) {
     const getCellsArray = () => cellsArray;
     const updateCellsArray = (index, value, selected) => {
         cellsArray[index] = new GameCell(index + 1, value, selected)
-    }
+    };
+    const resetCellsArray = () => {
+        cellsArray = [
+            new GameCell(1), new GameCell(2), new GameCell(3),
+            new GameCell(4), new GameCell(5), new GameCell(6),
+            new GameCell(7), new GameCell(8), new GameCell(9),
+        ];
+    };
 
     let currentTurn = player1;
     const getCurrentPlayer = () => currentTurn;
@@ -58,7 +65,7 @@ function GameInit(player1, player2) {
     };
 
     return {
-        getCellsArray, updateCellsArray,
+        getCellsArray, updateCellsArray, resetCellsArray,
         getCurrentPlayer, updateCurrentPlayer,
         getPlayerScore, updatePlayerScore,
         getPlayers, reset, bruteReset,
@@ -75,6 +82,18 @@ const DOMCellItems = [...document.querySelectorAll(".tic-tac-toe-game-squares-gr
 const Game = GameInit("X", "O");
 
 DOMCellItems.forEach((cellItem, index) => {
+    cellItem.addEventListener("mouseenter", () => {
+        const currentCellArray1 = Game.getCellsArray();
+        if (!currentCellArray1[index].selected) {
+            cellItem.innerHTML = `<span class="tic-tac-toe-game-squares-grid-square-item-preview-action">${Game.getCurrentPlayer()}</span>`
+        }
+    });
+    cellItem.addEventListener("mouseleave", () => {
+        const currentCellArray1 = Game.getCellsArray();
+        if (!currentCellArray1[index].selected) {
+            cellItem.innerHTML = "";
+        }
+    });
     cellItem.addEventListener("click", () => {
         const currentCellArray1 = Game.getCellsArray();
         const players = Game.getPlayers();
@@ -134,7 +153,27 @@ DOMCellItems.forEach((cellItem, index) => {
             }
 
             if (!didAnyWin) {
-                Game.updateCurrentPlayer();
+                const currentCellArray = Game.getCellsArray();
+                let allSelected = false;
+                let tie = true;
+                for (let i = 0; i < currentCellArray.length; i++) {
+                    if (currentCellArray[i].selected) {
+                        allSelected = true;
+                        tie = true;
+                    } else {
+                        allSelected = false;
+                        tie = false;
+                        break;
+                    }
+                }
+                if (tie) {
+                    DOMCellItems.forEach(item => {
+                        item.innerHTML = "";
+                    });
+                    Game.resetCellsArray();
+                } else {
+                    Game.updateCurrentPlayer();
+                }
             }
             /*if (currentCellArray[0].value && currentCellArray[0].value === currentCellArray[1].value && currentCellArray[0].value === currentCellArray[2].value) {
                 DOMCellItems.forEach(item => {
