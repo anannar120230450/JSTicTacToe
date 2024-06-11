@@ -31,6 +31,13 @@ function GameInit(player1, player2) {
         currentTurn === player1 ? currentTurn = player2 : currentTurn = player1;
     };
 
+    const getPlayers = () => {
+        return {
+            player1: player1,
+            player2: player2,
+        };
+    };
+
     const reset = () => {
         currentTurn = "X";
         cellsArray = [
@@ -39,18 +46,22 @@ function GameInit(player1, player2) {
             new GameCell(7), new GameCell(8), new GameCell(9),
         ];
     };
-    const getPlayers = () => {
-        return {
-            player1: player1,
-            player2: player2,
-        };
+    const bruteReset = () => {
+        currentTurn = "X";
+        cellsArray = [
+            new GameCell(1), new GameCell(2), new GameCell(3),
+            new GameCell(4), new GameCell(5), new GameCell(6),
+            new GameCell(7), new GameCell(8), new GameCell(9),
+        ];
+        play1Score = 0;
+        play2Score = 0;
     };
 
     return {
         getCellsArray, updateCellsArray,
         getCurrentPlayer, updateCurrentPlayer,
         getPlayerScore, updatePlayerScore,
-        reset, getPlayers,
+        getPlayers, reset, bruteReset,
     };
 };
 
@@ -145,4 +156,13 @@ DOMCellItems.forEach((cellItem, index) => {
             };*/
         };
     });
+});
+
+// restart
+document.getElementById("winning-message-popup-restart-btn").addEventListener("click", () => {
+    Game.bruteReset();
+    document.querySelector(".game-info-toolbar-player-scores-player-1-score").innerHTML = Game.getPlayerScore(1);
+    document.querySelector(".game-info-toolbar-player-scores-player-2-score").innerHTML = Game.getPlayerScore(2);
+    document.querySelector("#winning-message-text").innerHTML = "";
+    document.querySelector(".winning-message-backdrop").style.display = "none";
 });
